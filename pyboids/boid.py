@@ -4,6 +4,7 @@ import random
 import pygame
 
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 
 
 class Boid:
@@ -15,12 +16,13 @@ class Boid:
         self.width = width
         self.height = height
 
-    def update(self, boids):
+    def update(self, boids, goal_x, goal_y):
         alignment = self.alignment(boids)
         cohesion = self.cohesion(boids)
         separation = self.separation(boids)
+        move_towards_goal = self.move_towards_goal(goal_x, goal_y)
 
-        self.angle += alignment + cohesion + separation
+        self.angle += alignment + cohesion + separation + move_towards_goal
         self.x += self.speed * math.cos(self.angle)
         self.y += self.speed * math.sin(self.angle)
 
@@ -48,5 +50,13 @@ class Boid:
         separation_angle = math.atan2(move_y, move_x)
         return (separation_angle - self.angle) / 8
 
+    def move_towards_goal(self, goal_x, goal_y):
+        angle_to_goal = math.atan2(goal_y - self.y, goal_x - self.x)
+        return angle_to_goal - self.angle
+
     def draw(self, screen):
         pygame.draw.circle(screen, WHITE, (int(self.x), int(self.y)), 5)
+
+    def reached_goal(self, goal_x, goal_y, tolerance=5):
+        distance_to_goal = math.sqrt((self.x - goal_x) ** 2 + (self.y - goal_y) ** 2)
+        return distance_to_goal < tolerance
