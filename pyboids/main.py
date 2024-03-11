@@ -3,7 +3,6 @@ import random
 import pygame
 
 from boid import Boid
-from goal import Goal
 
 pygame.init()
 
@@ -17,8 +16,8 @@ pygame.display.set_caption("Boids Simulation")
 def main():
     clock = pygame.time.Clock()
     num_boids = 10
-    boids = [Boid(random.uniform(0, WIDTH), random.uniform(0, HEIGHT), WIDTH, HEIGHT) for _ in range(num_boids)]
-    goal = None
+    boids = [Boid(random.uniform(0, WIDTH), random.uniform(
+        0, HEIGHT), WIDTH, HEIGHT) for _ in range(num_boids)]
 
     while True:
         for event in pygame.event.get():
@@ -26,16 +25,10 @@ def main():
                 pygame.quit()
                 exit()
 
-        if goal is None or any(boid.reached_goal(goal.x, goal.y) for boid in boids):
-            goal = Goal(random.uniform(0, WIDTH), random.uniform(0, HEIGHT), WIDTH, HEIGHT)
-
         screen.fill(BLACK)
 
-        if goal is not None:
-            goal.draw(screen)
-
         for boid in boids:
-            boid.update(boids, goal.x, goal.y)
+            boid.update(boids)
             boid.draw(screen)
 
         pygame.display.flip()
